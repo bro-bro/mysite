@@ -1,32 +1,52 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from social.apps.django_app.utils import psa
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.loader import get_template
 from django.template import Context
-
-#import requests
+from social.pipeline.social_auth import load_extra_data
+import facebook
 
 class IndexView (TemplateView):
-
-	template_name = 'index.html'
-
-@psa('social:complete')
-def auth(request, backend):
-    if isinstance(request.backend, BaseOAuth2):
-        token = request.REQUEST.get('access_token')
-    else:
-        raise HttpResponseBadRequest('Wrong backend type')
-    user = request.backend.do_auth(request.GET.get('access_token'))
-    if user:
-        login(request, user)
-        data = {'id': user.id, 'username': user.username}
-        return 'OK'
-    else:
-        return 'ERROR'
+    template_name = 'index.html'
 
 def done(request):
-    view = "facebook"
     t = get_template('done.html')
-    html = t.render(Context({'name':view}))
+    social_user = request.user.social_auth.filter(provider='facebook',).first()
+
+    html = t.render(Context({'name':social_user.extra_data['access_token']}))
+    return HttpResponse(html)
+
+
+def list(request):
+    social_user = request.user.social_auth.get(provider='facebook',)
+    token = social_user.extra_data['access_token']
+    graph = facebook.GraphAPI(access_token=token)
+    graph.put_object(parent_object='me', connection_name='feed', message='Hello, world')
+    t = get_template('list.html')
+    html = t.render(Context({'var':'Hello world'}))
+    return HttpResponse(html)
+
+def get(request):
+    social_user = request.user.social_auth.filter(provider='facebook',).first()
+    token = social_user.extra_data['access_token']
+    graph = facebook.GraphAPI(access_token=token)
+    #graph.put_object(parent_object='me', connection_name='feed', message='Hello, world')
+    groups = graph.get_connections(id='me', connection_name='groups')
+    mass = ''
+    #for i in groups['data']:
+     #   mass += groups[i]['name']
+    #graph.put_object("page id", "feed", message='My message goes here')
+    for i in range (0, len(groups)):
+        mass += str(i)
+        mass += ')   Name: '
+        mass += str(groups['data'][i]['name'])
+        mass += ';   Administrator: '
+        mass += str(groups['data'][i]['administrator'])
+        mass += '   '
+    
+    graph.put_object(parent_object=groups['data'][0]['id'], connection_name='feed', message='I write from site')
+    graph.put_object(parent_object=groups['data'][1]['id'], connection_name='feed', message='I write from site')
+    t = get_template('list.html')
+    html = t.render(Context({'var': mass}))
     return HttpResponse(html)

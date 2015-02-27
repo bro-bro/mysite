@@ -1,5 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 
+from django.db import models
+from django.contrib.auth.models import User
 
-class CustomUser(AbstractUser):
-    pass
+class Profile(models.Model):
+   """model to represent additional information about users"""
+   user = models.OneToOneField(User)
+   # ... other custom stuff here
