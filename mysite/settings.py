@@ -84,7 +84,7 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'ru_RU'}
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['public_profile','user_groups', 'publish_actions',  'manage_pages']
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/done/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_PIPELINE = (
 
@@ -97,6 +97,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details'
 )
+
+MIDDLEWARE_CLASSES += (
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+)
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 
 try:
     from mysite.local_settings import *

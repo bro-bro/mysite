@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.loader import get_template
 from django.template import Context
 from social.pipeline.social_auth import load_extra_data
+from django.contrib.auth import logout
 import facebook
 
 class IndexView (TemplateView):
@@ -50,3 +50,8 @@ def get(request):
     t = get_template('list.html')
     html = t.render(Context({'var': mass}))
     return HttpResponse(html)
+
+
+def LogOut(request):
+    logout(request)
+    return redirect('/')

@@ -7,8 +7,9 @@ urlpatterns = patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', IndexView.as_view()),
-    url(r'^done/$', 'principal.views.done', name='done'),
-    url(r'^done/list/$', 'principal.views.list', name='list'),
-    url(r'^done/get/$', 'principal.views.get', name='get'),
+    url(r'^done_auth/$', 'principal.views.done',  name='done'),
+    url(r'^done_auth/list/$', 'principal.views.list', name='list'),
+    url(r'^done_auth/get/$', 'principal.views.get', name='get'),
+    url (r'^hello/$', 'principal.views.LogOut'),
 )
 
