@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.loader import get_template
 from django.template import Context
-from social.pipeline.social_auth import load_extra_data
 from django.contrib.auth import logout
 import facebook
 
@@ -18,7 +17,7 @@ def done(request):
     return HttpResponse(html)
 
 
-def list(request):
+def my_post(request):
     social_user = request.user.social_auth.get(provider='facebook',)
     token = social_user.extra_data['access_token']
     graph = facebook.GraphAPI(access_token=token)
