@@ -24,7 +24,6 @@ def done(request):
     
 
     l_group = []
-    l_ = []
     for i in range(0, len(groups['data'])):
         l_group.append(groups['data'][i]['name'])
 
@@ -32,34 +31,12 @@ def done(request):
     public_page = graph.get_object("me/accounts")
 
     l_page = []
-    l_p = []
 
     for i in range(0, len(public_page['data'])):
         l_page.append(public_page['data'][i]['name'])
 
     t = get_template('done.html')
     html = t.render(Context({'name':social_user.extra_data['access_token'], 'username':social_user, 'list_group': l_group, 'list_pubpage':l_page }))
-    return HttpResponse(html)
-
-
-def my_post(request):
-    social_user = request.user.social_auth.get(provider='facebook',)
-    
-    graph.put_object(parent_object='me', connection_name='feed', message='Hello, world')
-    t = get_template('list.html')
-    html = t.render(Context({'var':'Hello world'}))
-    return HttpResponse(html)
-
-def get(request):
-    social_user = request.user.social_auth.filter(provider='facebook',).first()
-    token = social_user.extra_data['access_token']
-    graph = facebook.GraphAPI(access_token=token)
-    
-    groups = graph.get_connections(id='me', connection_name='accounts')
-    mass = ''
-    
-    t = get_template('list.html')
-    html = t.render(Context({'var': groups}))
     return HttpResponse(html)
 
 
