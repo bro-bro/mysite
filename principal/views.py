@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -5,22 +7,44 @@ from django.template.loader import get_template
 from django.template import Context
 from django.contrib.auth import logout
 import facebook
+from django.shortcuts import render
+
+def index(request):
+    return render('done.html')
 
 class IndexView (TemplateView):
     template_name = 'index.html'
 
 def done(request):
-    t = get_template('done.html')
-    social_user = request.user.social_auth.filter(provider='facebook',).first()
+    
+    social_user = request.user.social_auth.get(provider='facebook',)
+    token = social_user.extra_data['access_token']
+    graph = facebook.GraphAPI(access_token=token)
+    groups = graph.get_object("me/groups")
+    
 
-    html = t.render(Context({'name':social_user.extra_data['access_token']}))
+    l_group = []
+    l_ = []
+    for i in range(0, len(groups['data'])):
+        l_group.append(groups['data'][i]['name'])
+
+    user = request.user
+    public_page = graph.get_object("me/accounts")
+
+    l_page = []
+    l_p = []
+
+    for i in range(0, len(public_page['data'])):
+        l_page.append(public_page['data'][i]['name'])
+
+    t = get_template('done.html')
+    html = t.render(Context({'name':social_user.extra_data['access_token'], 'username':social_user, 'list_group': l_group, 'list_pubpage':l_page }))
     return HttpResponse(html)
 
 
 def my_post(request):
     social_user = request.user.social_auth.get(provider='facebook',)
-    token = social_user.extra_data['access_token']
-    graph = facebook.GraphAPI(access_token=token)
+    
     graph.put_object(parent_object='me', connection_name='feed', message='Hello, world')
     t = get_template('list.html')
     html = t.render(Context({'var':'Hello world'}))
@@ -30,27 +54,39 @@ def get(request):
     social_user = request.user.social_auth.filter(provider='facebook',).first()
     token = social_user.extra_data['access_token']
     graph = facebook.GraphAPI(access_token=token)
-    #graph.put_object(parent_object='me', connection_name='feed', message='Hello, world')
-    groups = graph.get_connections(id='me', connection_name='groups')
-    mass = ''
-    #for i in groups['data']:
-     #   mass += groups[i]['name']
-    #graph.put_object("page id", "feed", message='My message goes here')
-    for i in range (0, len(groups)):
-        mass += str(i)
-        mass += ')   Name: '
-        mass += str(groups['data'][i]['name'])
-        mass += ';   Administrator: '
-        mass += str(groups['data'][i]['administrator'])
-        mass += '   '
     
-    graph.put_object(parent_object=groups['data'][0]['id'], connection_name='feed', message='I write from site')
-    graph.put_object(parent_object=groups['data'][1]['id'], connection_name='feed', message='I write from site')
+    groups = graph.get_connections(id='me', connection_name='accounts')
+    mass = ''
+    
     t = get_template('list.html')
-    html = t.render(Context({'var': mass}))
+    html = t.render(Context({'var': groups}))
     return HttpResponse(html)
 
 
 def LogOut(request):
     logout(request)
     return redirect('/')
+
+
+def contact(request):
+    text = request.POST['fname'].encode('utf-8')
+    group_post = request.POST.getlist('Cbox')
+    page_post = request.POST.getlist('Pbox')
+    social_user = request.user.social_auth.get(provider='facebook',)
+    token = social_user.extra_data['access_token']
+    graph = facebook.GraphAPI(access_token=token)
+    if request.POST.getlist('checks'):
+        graph.put_object(parent_object='me', connection_name='feed', message=text)
+    #if group_post:
+     #   for i in range(0, len(group_post)) :
+      #     graph.put_object(parent_object=group_post[i].encode('utf-8'), connection_name='feed', message=text)
+    #if page_post:
+     #   for i in page_post:
+      #      graph.put_object(parent_object=i, connection_name='feed', message=text)
+                    
+    t = get_template('list.html')
+    html = t.render(Context({'message': group_post}))
+    return HttpResponse(html)
+
+    
+

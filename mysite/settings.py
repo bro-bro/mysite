@@ -38,7 +38,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -80,7 +80,7 @@ AUTHENTICATION_BACKENDS = (
 
 
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'ru_RU'}
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['public_profile','user_groups', 'publish_actions',  'manage_pages']
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['public_profile','user_groups', 'publish_actions', 'manage_pages']
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
@@ -98,6 +98,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 MIDDLEWARE_CLASSES += (
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    
 )
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 
