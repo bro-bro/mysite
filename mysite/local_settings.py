@@ -5,7 +5,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 TEMPLATE_DIRS = {
-    '/home/molkopeace//myface/bin/mysite/templates'
+    '/home/molkopeace//faceface/bin/mysite/templates'
 }
 
 
@@ -24,7 +24,7 @@ SOCIAL_AUTH_FACEBOOK_KEY = '1549363238682841'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'da06ad7d8c50b31d8d60d590867333d7'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "/home/molkopeace/myface/bin/mysite/static"),
+    os.path.join(BASE_DIR, "/home/molkopeace/faceface/bin/mysite/static"),
     )
 
 STATICFILES_FINDERS = (

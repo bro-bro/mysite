@@ -1,5 +1,5 @@
 body {
-  min-height: 200px;
+  min-height: 350px;
   padding-top: 70px;
 }
 
@@ -13,7 +13,7 @@ margin-right: auto;
 }
 
 .example_code {
-	min-height: 300px;
+	min-height: 350px;
     width: auto;
     background-color: #FFF;
     padding: 1.1%;

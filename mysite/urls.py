@@ -1,15 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+
 from principal.views import IndexView
 
 urlpatterns = patterns('',
-    url('', include('social.apps.django_app.urls', namespace='social')),
-    url(r'^admin/', include(admin.site.urls)),
+	url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', IndexView.as_view()),
-    url(r'^done_auth/$', 'principal.views.done',  name='done'),
-    url(r'^done_auth/list/$', 'principal.views.contact', name='list'),
-    url(r'^done_auth/get/$', 'principal.views.get', name='get'),
+    url(r'^admin/', include(admin.site.urls)),
     url (r'^hello/$', 'principal.views.LogOut'),
+    url(r'^create_post/$', 'principal.views.create_post', name='create_post'),
+    url(r'^create_post/list/$', 'principal.views.list', name='list'),
 )
-urlpatterns += staticfiles_urlpatterns()
