@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import facebook
-import sys
-
 
 class Group(object):
     def __init__(self, token):
