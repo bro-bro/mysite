@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load taglist %}
+{% load staticfiles %}
+{% block title %}Создать пост{% endblock %}
+
+
+{% block header %}
+      {% include "head.html" %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/">Добро пожаловать {{ username }}</a></li>
+        <li><a href="/hello/">Выход</a></li>
+      </ul>
+{% endblock %}
+
+{% block content %}
+
+ <div class="container">
+    <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <div class = "container"> 
+          <div class="inner cover">
+            <div class="row">
+              <form action="/create_post/" method="POST">    
+                <div class="col-sm-6">
+                  <div class="example_code">
+              
+                    <h3>Ваш токен </h3>
+                    <h5><div>{{ token }}</div> </h5><br>        
+                
+                    <textarea class="form-control" name="textname"  rows="3" placeholder = "Введите текст..."></textarea>
+                    <br> 
+                    <input class="btn btn-lg btn-default" type="submit" value="Отправить">
+                  </div>
+                </div>
+                           
+              <div class="col-sm-6" > 
+                <div class="example_code">
+                  <div class="container"> 
+
+                                            
+                      {{form1}}
+
+                    
+                    </div>         
+                  </div>
+                </div>
+              </form>
+                            
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  
+
+
+
+{% endblock %}

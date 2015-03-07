@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import facebook
 import sys
 
@@ -13,6 +14,10 @@ class Group(object):
 
     def getpages(self):
         return tuple([tuple([page['id'],page['name']]) for page in self.pages])
+
+    def post(self, text):
+        for i in text.getlist('POST'):
+            self.graph.put_object(parent_object=i, connection_name='feed', message=text['textname'].encode('utf-8'))
 
 
 

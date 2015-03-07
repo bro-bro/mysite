@@ -1,12 +1,36 @@
-<!DOCTYPE HTML>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document 2</title>
-</head>
-<body>
-    Вы только что отправили сообщение:<br>
-        {{message}}
-            {{message2}}
-</body>
-</html>
+{% extends "base.html" %}
+{% load taglist %}
+{% load staticfiles %}
+{% block title %}Создать пост{% endblock %}
+
+
+{% block header %}
+      {% include "head.html" %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/">Добро пожаловать {{ username }}</a></li>
+        <li><a href="/hello/">Выход</a></li>
+      </ul>
+{% endblock %}
+
+{% block content %}
+ <div class="container">
+    <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <div class = "container"> 
+          <div class="inner cover">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="example_code">
+                        <h2>{{message1}}</h2>
+                        <h3>{{message}}</h3>
+                        <br>
+                        <a href="/create_post/"class="btn btn-lg btn-2">Вернуться</a>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+{% endblock %}

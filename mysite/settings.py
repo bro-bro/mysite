@@ -99,8 +99,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 MIDDLEWARE_CLASSES += (
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
-    
+'principal.middleware.SocialAuthExceptionMiddleware',
 )
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 

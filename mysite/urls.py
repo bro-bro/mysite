@@ -10,5 +10,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url (r'^hello/$', 'principal.views.LogOut'),
     url(r'^create_post/$', 'principal.views.create_post', name='create_post'),
-    url(r'^create_post/list/$', 'principal.views.list', name='list'),
+    url(r'^create_post/list$', 'principal.views.create_post', name='list'),
 )
