@@ -32,11 +32,11 @@ def create_post(request):
     elif request.method == 'POST':
         t = get_template('list.html')
         if len(request.POST.get('textname')) == 0:
-            html = t.render(Context({'message': "Пожалуйста, ведите текст.", 'message1': "Ошибка!"}))
+            html = t.render(Context({'message': "Пожалуйста, ведите текст.", 'message1': "Ошибка!", 'username':social_user}))
         elif not request.POST.get('POST'):
-            html = t.render(Context({'message': "Пожалуйста, выберите страницу или группу.", 'message1': "Ошибка!"}))
+            html = t.render(Context({'message': "Пожалуйста, выберите страницу или группу.", 'message1': "Ошибка!", 'username':social_user}))
         else:
             group.post(request.POST)
-            html = t.render(Context({'message': "Сообщение успешно отправлено!"}))
+            html = t.render(Context({'message': "Сообщение успешно отправлено!", 'username':social_user}))
 
     return HttpResponse(html)
