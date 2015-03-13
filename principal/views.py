@@ -22,12 +22,9 @@ def create_post(request):
     social_user = request.user.social_auth.get(provider='facebook',)
     group = Group(social_user.extra_data['access_token'])
     if request.method == 'GET':
-        lists = ( (("Моя страница"), (('me', social_user),)), (("Группы"), group.getgroups()), (("Публичные страницы"), group.getpages()))
-        my_form1 = Group_List()
-        my_form1.fields['POST'].choices = lists
+        my_form1 = Group_List(form_list(social_user, group.getgroups(), group.getpages()))
         t = get_template('create_post.html')
         html = t.render(Context({'token':social_user.extra_data['access_token'], 'username':social_user, 'form1':my_form1 }))
-        
 
     elif request.method == 'POST':
         t = get_template('list.html')
@@ -36,7 +33,10 @@ def create_post(request):
         elif not request.POST.get('POST'):
             html = t.render(Context({'message': "Пожалуйста, выберите страницу или группу.", 'message1': "Ошибка!", 'username':social_user}))
         else:
-            group.post(request.POST)
+            group.create_posts(request.POST)
             html = t.render(Context({'message': "Сообщение успешно отправлено!", 'username':social_user}))
 
     return HttpResponse(html)
+
+def form_list(me, group, page):
+    return [[("Моя страница"), [['me', me],]], [("Группы"), group], [("Публичные страницы"), page]]

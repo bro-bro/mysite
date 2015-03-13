@@ -8,14 +8,14 @@ class Group(object):
         self.pages = self.graph.get_connections(id='me', connection_name='accounts')['data']
 
     def getgroups(self):
-        return tuple([tuple([group['id'],group['name']]) for group in self.groups])
+        return [[group['id'],group['name']] for group in self.groups]
 
     def getpages(self):
-        return tuple([tuple([page['id'],page['name']]) for page in self.pages])
+        return [[page['id'],page['name']] for page in self.pages]
 
-    def post(self, text):
+    def create_posts(self, text):
         for i in text.getlist('POST'):
-            self.graph.put_object(parent_object=i, connection_name='feed', message=text['textname'].encode('utf-8'))
-
-
-
+            self.create_post(i, text)
+            
+    def create_post(self, i, text):
+        self.graph.put_object(parent_object=i, connection_name='feed', message=text['textname'].encode('utf-8'))
