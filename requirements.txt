@@ -1,0 +1,4 @@
+Django==1.7.4
+facebook-sdk
+python-social-auth
+mock
