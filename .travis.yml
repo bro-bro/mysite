@@ -4,11 +4,14 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
-  - "3.4"
+
 env:
   - DJANGO_VERSION=1.7.4
 
 # command to install dependencies
-install: "pip install -r requirements.txt"
+
+install: 
+  - pip install -q Django==$DJANGO_VERSION
+  - pip install -r requirements.txt --use-mirrors
 # command to run tests
-script: python manage.py test
+script: python principal/tests.py
