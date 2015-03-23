@@ -4,34 +4,44 @@ from utils import Group
 import mock
 from mock import Mock
 import unittest
+from django.test import TestCase
 
-class SimpleFacebookTestCase(unittest.TestCase):
-    
-#    def test_create_post(self):
- #       groups = Group("fakeOAuth")
-  #      groups.graph.put_object = mock.create_autospec(groups.graph.put_object)
-   #     groups.create_post("me","gooz")
-    #    groups.graph.put_object.assert_called_with(parent_object = "me", connection_name="feed", message="gooz")
+class SimpleFacebookTestCase(TestCase):
 
-    def test_getgroups(self):
+    def setUp(self):
         self.groups = Group("fakeOAuth")
         self.groups.graph = Mock()
+        
+    def test_getgroups_empty(self):
         self.groups.graph.get_object = Mock(return_value=dict())
-        self.groups.getgroups()
-        self.groups.graph.get_object.assert_called_with('me/groups')
+        self.assertEqual(self.groups.getgroups(), [])
 
-    def test_getpages(self):
-        self.groups = Group("fakeOAuth")
-        self.groups.graph = Mock()
+    def test_getgroups_with_data(self):
+        self.groups.graph.get_object = Mock(return_value={'data':[{'id':'1', 'name':'a'},
+                                                                  {'id':'4', 'name':'d'},
+                                                                  {'id':'3', 'name':'c'},
+                                                                  {'id':'2', 'name':'b'}]})
+        self.assertEqual(self.groups.getgroups(), [['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']])
+
+
+    def test_getpages_empty(self):
         self.groups.graph.get_connections = Mock(return_value=dict())
-        self.groups.getpages()
-        self.groups.graph.get_connections.assert_called_with(id='me', connection_name='accounts')
+        self.assertEqual(self.groups.getpages(), [])
 
+    def test_getpages_with_data(self):
+        self.groups.graph.get_connections = Mock(return_value={'data':[{'id':'1', 'name':'a'},
+                                                                  {'id':'4', 'name':'d'},
+                                                                  {'id':'3', 'name':'c'},
+                                                                  {'id':'2', 'name':'b'}]})
+        self.assertEqual(self.groups.getpages(), [['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']])
+      
+    def test_create_posts(self):
+        self.text = "Hello World!"
+        self.form = [['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']]
+        for i in self.form:
+          self.assertEqual(self.test_create_post(), None)
 
     def test_create_post(self):
-        self.groups = Group("fakeOAuth")
-        self.groups.graph = Mock()
         self.groups.graph.put_object = Mock()
         self.groups.create_post("me","gooz")
         self.groups.graph.put_object.assert_called_with(parent_object = "me", connection_name="feed", message="gooz")
-

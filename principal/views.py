@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView, FormView
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -7,12 +7,13 @@ from django.template.loader import get_template
 from django.template import Context
 from form import Group_List
 from utils import Group
-
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.http import HttpResponseRedirect
 # Create your views here.
 
 class IndexView(TemplateView):
     template_name = 'index.html'
-
 
 def LogOut(request):
     logout(request)
@@ -21,26 +22,41 @@ def LogOut(request):
 def form_list(me, group, page):
     return [[("Моя страница"), [['me', me],]], [("Группы"), group], [("Публичные страницы"), page]]
 
+class DoneView(TemplateView):
+    template_name = 'list.html'
 
-class create_post(View):
+class CreatePost(FormView):
+    template_name = "create_post.html"
+    success_url = 'list/'
+    form_class = Group_List
 
-    def get(self, request, *args, **kwargs):
-        social_user = request.user.social_auth.get(provider='facebook',)
-        group = Group(social_user.extra_data['access_token'])
+    @method_decorator(login_required())
+    def dispatch(self, request, *args, **kwargs):
+        self.social_user = request.user.social_auth.get(provider='facebook',)
+        self.group = Group(self.social_user.extra_data['access_token'])
+        return super(CreatePost, self).dispatch(request, *args, **kwargs)
 
-        my_form1 = Group_List(form_list(social_user, group.getgroups(), group.getpages()))
-        
-        return render(request, 'create_post.html', {'token':social_user.extra_data['access_token'], 'username':social_user, 'form1':my_form1 , 'm':group.getgroups()})
+    def get_form_kwargs(self):
+        kwargs = super(CreatePost, self).get_form_kwargs()
+        kwargs['mylist'] = form_list(self.social_user, self.group.getgroups(), self.group.getpages())
+        return kwargs
 
-    def post(self, request, *args, **kwargs):
-        social_user = request.user.social_auth.get(provider='facebook',)
-        group = Group(social_user.extra_data['access_token'])
+    def get_context_data(self, **kwargs):
+        context = super(CreatePost, self).get_context_data(**kwargs)
+        context['token'] = self.social_user.extra_data['access_token']
+        context['username'] = self.social_user
+        return context
 
-        self.template_name = 'list.html'
-        if len(request.POST.get('textname')) == 0:
-            return render(request, self.template_name, {'message': "Пожалуйста, ведите текст.", 'message1': "Ошибка!", 'username':social_user })
-        elif not request.POST.get('POST'):
-            return render(request, self.template_name, {'message': "Пожалуйста, выберите страницу или группу.", 'message1': "Ошибка!", 'username':social_user})
-        else:
-            group.create_posts(request.POST)
-            return render(request, self.template_name, {'message': "Сообщение успешно отправлено!", 'username':social_user})
+    def form_valid(self, form_class):
+        context = self.get_context_data()
+        context['form'] = form_class
+        text = form_class.cleaned_data['Text']
+        listofchosen = form_class.cleaned_data['POST']
+        self.group.create_posts(text,listofchosen)
+        return super(CreatePost, self).form_valid(form_class)
+
+    def form_invalid(self, form_class, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['message'] = 'Ошибка! Попробуйте снова.'
+        context['form'] = form_class
+        return self.render_to_response(context)

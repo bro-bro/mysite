@@ -18,6 +18,7 @@
     <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class = "container"> 
+
           <div class="inner cover">
             <div class="row">
               <form action="/create_post/" method="POST">    
@@ -26,19 +27,20 @@
                   <div class="col-sm-7">
               
                     <h3>Ваш токен </h3>
-                    <h5><div>{{ token }}</div> </h5>      
-                
-                    <textarea class="form-control" name="textname"  rows="4" placeholder = "Введите текст..."></textarea>
+                    <h5><div>{{ token }}</div> </h5> 
+                    {{form.Text}}     
+                      
                     <br> 
                     <input class="btn btn-lg btn-default" type="submit" value="Отправить">
-                  </div>
-               
-                           
+                    <br> 
+                  <h5>{{ message }}</h5> 
+                  </div>       
                   <div class="col-sm-4" > 
                     <div class="container">               
-                      {{form1}} 
+                      {{form.POST}} 
                     </div>    
                   </div>
+
                 </div>
               </form>
                             
@@ -47,9 +49,5 @@
         </div>
       </div>
   </div>
-
-  
-
-
 
 {% endblock %}

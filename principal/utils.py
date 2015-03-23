@@ -19,9 +19,9 @@ class Group(object):
         else:
             return []
 
-    def create_posts(self, text):
-        for i in text.getlist('POST'):
-            self.create_post(i, text['textname'])
+    def create_posts(self, text, form):
+        for i in form:
+            self.create_post(i, text)
             
     def create_post(self, i, text):
         self.graph.put_object(parent_object=i, connection_name='feed', message=text.encode('utf-8'))
