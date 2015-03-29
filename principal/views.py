@@ -41,22 +41,15 @@ class CreatePost(FormView):
         kwargs['mylist'] = form_list(self.social_user, self.group.getgroups(), self.group.getpages())
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, form, **kwargs):
         context = super(CreatePost, self).get_context_data(**kwargs)
         context['token'] = self.social_user.extra_data['access_token']
         context['username'] = self.social_user
+        context['form'] = form
         return context
 
-    def form_valid(self, form_class):
-        context = self.get_context_data()
-        context['form'] = form_class
-        text = form_class.cleaned_data['Text']
-        listofchosen = form_class.cleaned_data['POST']
+    def form_valid(self, form):
+        text = form.cleaned_data['Text']
+        listofchosen = form.cleaned_data['POST']
         self.group.create_posts(text,listofchosen)
-        return super(CreatePost, self).form_valid(form_class)
-
-    def form_invalid(self, form_class, **kwargs):
-        context = self.get_context_data(**kwargs)
-        context['message'] = 'Ошибка! Попробуйте снова.'
-        context['form'] = form_class
-        return self.render_to_response(context)
+        return super(CreatePost, self).form_valid(form)

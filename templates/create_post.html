@@ -25,7 +25,8 @@
                 
                 <div class="example_code">
                   <div class="col-sm-7">
-              
+
+
                     <h3>Ваш токен </h3>
                     <h5><div>{{ token }}</div> </h5> 
                     {{form.Text}}     
@@ -34,7 +35,14 @@
                     <input class="btn btn-lg btn-default" type="submit" value="Отправить">
                     <br> 
                   <h5>{{ message }}</h5> 
+                  {% if form.Text.errors %}
+                        <h5>Введите текст </h5>
+                    {%  endif %}
+                    {% if form.POST.errors %}
+                        <h5>Выберите группу</h5>
+                    {%  endif %}
                   </div>       
+
                   <div class="col-sm-4" > 
                     <div class="container">               
                       {{form.POST}} 
