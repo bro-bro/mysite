@@ -10,4 +10,4 @@ install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install -r requirements.txt --use-mirrors
 # command to run tests
-script: python principal/tests.py
+script: python manage.py test
