@@ -11,5 +11,5 @@ urlpatterns = patterns('',
     url (r'^hello/$', 'principal.views.LogOut'),
     url(r'^create_post/$', CreatePost.as_view()),
     url(r'^create_post/list/$', DoneView.as_view()),
-    url(r'^api-auth/', include('principal.rest_urls', namespace='rest_framework'))
+    url(r'^api/', include('principal.rest_urls', namespace='rest_framework'))
 )

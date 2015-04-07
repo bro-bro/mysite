@@ -47,8 +47,7 @@ class SimpleFacebookTestCase(TestCase):
               self.groups.graph.put_object = Mock()
               self.groups.create_post(i,self.text)
               self.groups.graph.put_object.assert_called_with(parent_object = i, connection_name="feed", message=self.text)
-import random
-import string
+
 
 def random_digits(n):
     a = string.digits
@@ -57,3 +56,4 @@ def random_digits(n):
 def random_text(n):
     a = string.ascii_letters + string.digits
     return ''.join([random.choice(a) for i in range(n)])
+
