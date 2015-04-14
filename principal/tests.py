@@ -2,11 +2,92 @@
 import facebook
 from utils import Group
 import mock
-from mock import Mock
+from mock import Mock,MagicMock
 import unittest
 from django.test import TestCase
 import random
 import string
+import jwt
+from mock import patch
+
+
+class PostResourceTest(TestCase):
+
+    def setUp(self):
+        self.social_user = "Name"
+        self.AUTH = False
+        self.token = "fakeOAuth"
+        self.authtoken = jwt.encode({'user': str(self.social_user)}, 'secret')
+        self.groups = Group(self.token)
+        self.groups.graph = Mock()
+
+
+    def test_list(self):
+        
+        self.groups.getgroups = Mock(return_value=[['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']])
+        self.groups.getpages = Mock(return_value=[['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']])
+        fake_db = [
+        {
+            "facebook token": str(self.token),
+            "authtoken": str(self.authtoken),
+            "username": str(self.social_user),
+            "Groups": self.groups.getgroups(),
+            "Pages": self.groups.getpages(),
+        }
+        ]
+        self.assertEqual(fake_db, [{ "facebook token": str("fakeOAuth"),
+                                      "authtoken" : str(self.authtoken),
+                                      "username": str(self.social_user),
+                                      "Groups": [['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']],
+                                      "Pages": [['1', 'a'], ['4', 'd'], ['3','c'], ['2', 'b']],}])
+
+    
+    def test_is_authenticated_login_true(self):
+
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': 'hello'}
+        if request.META.get('HTTP_AUTHORIZATION') == 'hello':
+            self.AUTH = True
+        self.assertEqual(self.AUTH,True)
+
+    def test_is_authenticated_login_false(self):
+        self.AUTH = True
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': 'hellko'}
+        if request.META.get('HTTP_AUTHORIZATION') != 'hello':
+            self.AUTH = False
+        self.assertEqual(self.AUTH,False)
+
+    def test_is_authenticated_true(self):
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': self.authtoken}
+        token = request.META.get('HTTP_AUTHORIZATION')
+        detoken = jwt.decode(token, 'secret')
+        if detoken == {'user': self.social_user}:
+            self.AUTH = True
+        self.assertEqual(self.AUTH,True)
+
+
+    def test_is_authenticated_true(self):
+        self.AUTH = True
+        request = Mock()
+        request.META = {'HTTP_AUTHORIZATION': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGF0eWFuYUNoZXJlZCJ9.rMc1wahlF5enk8A4Vd-FRyzkxvnUJTduA8pdbNfBfcw"}
+        token = request.META.get('HTTP_AUTHORIZATION')
+        detoken = jwt.decode(token, 'secret')
+        if detoken != {'user': self.social_user}:
+            self.AUTH = False
+        self.assertEqual(self.AUTH,False)
+
+
+    def test_create(self):
+        self.groups.create = Mock()
+        self.groups.create_posts("text","me")
+        test_create_post.assert_called_with("post created")
+
+
+
+
+
 class SimpleFacebookTestCase(TestCase):
 
     def setUp(self):
